@@ -1,0 +1,19 @@
+using (var root = new DirectoryEntry($"LDAP://{Domain}"))
+{
+    using (var searcher = new DirectorySearcher(root))
+    {
+        // looking for a specific user
+        searcher.Filter = $"(&(objectCategory=person)(objectClass=user)(sAMAccountName={username}))";
+        // I only care about what groups the user is a memberOf
+        searcher.PropertiesToLoad.Add("memberOf");
+
+        // FYI, non-null results means the user was found
+        var results = searcher.FindOne();
+
+        var properties = results?.Properties;
+        if (properties?.Contains("memberOf") == true)
+        {
+            // ... iterate over all the groups the user is a member of
+        }
+    }
+}
